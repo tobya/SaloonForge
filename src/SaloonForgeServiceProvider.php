@@ -3,8 +3,10 @@
 namespace Tobya\SaloonForge;
 
 use Spatie\LaravelPackageTools\Package;
+use Tobya\SaloonForge\Commands\ForgeRequestCommand;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Tobya\SaloonForge\Commands\SaloonForgeCommand;
+
 
 class SaloonForgeServiceProvider extends PackageServiceProvider
 {
@@ -20,6 +22,6 @@ class SaloonForgeServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->hasViews()
             ->hasMigration('create_saloonforge_table')
-            ->hasCommand(SaloonForgeCommand::class);
+            ->hasCommand(ForgeRequestCommand::class);
     }
 }
