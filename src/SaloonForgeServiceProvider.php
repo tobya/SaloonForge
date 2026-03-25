@@ -22,6 +22,9 @@ class SaloonForgeServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->hasViews()
             ->hasMigration('create_saloonforge_table')
-            ->hasCommand(ForgeRequestCommand::class);
+            ->hasCommand(ForgeRequestCommand::class)
+            ->hasCommand(SaloonForgeCommand::class)
+
+        ;
     }
 }
