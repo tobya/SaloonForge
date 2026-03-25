@@ -8,6 +8,7 @@ use Saloon\Enums\Method;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
 use Saloon\Laravel\Console\Commands\MakeRequest;
+use Tobya\SaloonForge\SaloonForgeServiceProvider;
 use function Laravel\Prompts\select;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -49,7 +50,7 @@ class ForgeRequestCommand extends MakeRequest
      *
      * @var string
      */
-    protected $stub = 'saloon.request.stub';
+    protected $stub = 'saloon.forgerequest.stub';
 
     /**
      * Get the options for making a request
@@ -59,7 +60,7 @@ class ForgeRequestCommand extends MakeRequest
     protected function getOptions(): array
     {
         return [
-            ['method', 'm', InputOption::VALUE_REQUIRED, 'the route url of the request'],
+            ['method', 'm', InputOption::VALUE_REQUIRED, 'the method of the request'],
             ['route', 'r', InputOption::VALUE_REQUIRED, 'the route url of the request'],
             ['params', 'p', InputOption::VALUE_REQUIRED, 'the params of the request'],
         ];
@@ -81,6 +82,9 @@ class ForgeRequestCommand extends MakeRequest
      */
     protected function buildClass($name): MakeRequest|string
     {
+      //  echo "bvuild";
+       // dd('build');
+
         $method = $this->option('method') ?? 'GET';
 
         if (! is_string($method)) {
@@ -121,5 +125,11 @@ class ForgeRequestCommand extends MakeRequest
 
         }
         return str_replace('{{ params }}', $code, $stub);
+    }
+
+    protected function getStub()
+    {
+        // for some reason this is based on the saloon/laravel-saloon path.
+        return $this->resolveStubPath( '\\..\\..\\..\\..\\..\\tobya\\saloonforge\\stubs\\' . $this->resolveStubName());
     }
 }
