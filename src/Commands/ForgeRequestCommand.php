@@ -59,6 +59,7 @@ class ForgeRequestCommand extends MakeRequest
      */
     protected function getOptions(): array
     {
+
         return [
             ['method', 'm', InputOption::VALUE_REQUIRED, 'the method of the request'],
             ['route', 'r', InputOption::VALUE_REQUIRED, 'the route url of the request'],
