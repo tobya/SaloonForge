@@ -3,6 +3,10 @@
 namespace Tobya\SaloonForge\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Artisan;
+use Tobya\SaloonForge\Generators\RequestGenerator;
+
 
 class SaloonForgeCommand extends Command
 {
