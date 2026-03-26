@@ -3,6 +3,7 @@
   namespace Tobya\SaloonForge\Selectors;
 
   use Illuminate\Support\Facades\URL;
+  use Illuminate\Routing\RouteCollection;
 
   class RouteSelector
   {
@@ -14,12 +15,16 @@
           return $this->filterRoutes($this->routes);
       }
 
-      public  function getRoutes()
+    /**
+     * Get the underlying route collection.
+     *
+     */
+      public  function getRoutes() 
       {
           return \Illuminate\Support\Facades\Route::getRoutes();
       }
 
-      private function filterRoutes( $routes)
+      protected function filterRoutes( $routes)
       {
         //  $routes = collect($routes)->filter(function ($route)  {
         //      $flatroute= url()->query($route->uri())->route();

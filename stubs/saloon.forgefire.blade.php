@@ -4,11 +4,12 @@
 
 namespace App\Http\Integrations\{{$integration}};
 
- use App\Http\Integrations\{{$integration}}\Requests;
+
     @foreach ($requests as $request)
  use App\Http\Integrations\{{$integration}}\Requests\{{$request->name}};
         @endforeach
  use Saloon\Traits\Plugins\AcceptsJson;
+ use Saloon\Http\Response;
 
 class {{$integration}}
 {
@@ -20,10 +21,11 @@ class {{$integration}}
       }
 
     @foreach ($requests as $request)
-        /**
+      /**
         * {{$request->name}}
+        * @return Response
         */
-        public function {{$request->name}}({{$request->parameterlist()}})
+        public function {{$request->name}}({{$request->parameterlist()}}) : Response
         {
 
             $request = new {{$request->name}}({{$request->parameterlist()}});
