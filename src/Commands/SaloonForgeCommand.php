@@ -2,6 +2,7 @@
 
 namespace Tobya\SaloonForge\Commands;
 
+use Saloon\Http\Response;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Artisan;
@@ -17,6 +18,7 @@ class SaloonForgeCommand extends Command
     public function handle(): int
     {
 
+
         $RouteSelectorClass = config('saloonforge.routes.selector');
         $routeselector = new $RouteSelectorClass();
         // get all routes
@@ -26,11 +28,11 @@ class SaloonForgeCommand extends Command
         $requests = [];
         $integration = $this->argument('integration');
         foreach ($rz as $route) {
-            echo "\n $route->uri()";
+           // echo "\n $route->uri()";
             //print_r($route->parameterNames());
             $params = collect($route->parameterNames());
             $json_params = json_encode($params);
-            echo $json_params;
+           // echo $json_params;
             if ($route->getName() != null) {
 
                 $name = str($route->getName())->replace(['.', '-', ' '], ['', '', '']);
@@ -42,6 +44,7 @@ class SaloonForgeCommand extends Command
                 continue;
             }
 
+            $this->info('Creating Forge Request for ' .  $route->uri() ) ;
             Artisan::call('saloon:forgerequest', ['integration' => $integration,
                 'name' => $name,
                 '--method' => $route->methods()[0],
@@ -52,10 +55,12 @@ class SaloonForgeCommand extends Command
             $requests[] = new RequestGenerator($name, $route,$params );
 
         }
-
+            $this->info('Creating Connector for ' . $integration);
             Artisan::call('saloon:connector', ['integration' => $integration,
                 'name' => $integration . 'Connector',
             ]);
+
+            $this->info('Creating API Class for ' . $integration);
         $newfire = Blade::render(file_get_contents(__DIR__ . '/../../stubs/saloon.forgefire.blade.php'),
             [
                 'integration' => $integration,
