@@ -9,13 +9,13 @@ return [
         'exclude' =>
             [
               'middleware' => ['web'],
-             'filter' =>        ['/'],
+             'filter' =>        ['admin/*','log-viewer/*'],
              'unnamed' => true,
             ],
         'include' => [
             'middleware' => ['web'],
             'route-parameters' => [
-                'any' =>    ['{v4}'],
+                'any' =>    [],
                 'all' => [],  // not implemented
             ],
         ]
