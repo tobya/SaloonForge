@@ -41,7 +41,7 @@
 
           foreach(config('saloonforge.routes.exclude.filter') as $filter){
               echo "\n filter: $filter  " . $route->uri() . " \n";
-              if (Str::is( $filter,$route->uri(),)) {
+              if (Str::is( $filter,$route->uri(),ignoreCase: true)) {
                   return null;
               }
           }
