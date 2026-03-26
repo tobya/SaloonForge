@@ -27,9 +27,10 @@ class SaloonForgeCommand extends Command
       //  die();
         $requests = [];
         $integration = $this->argument('integration');
-        foreach ($rz as $route) {
+        foreach ($rz as $forgeRoute) {
            // echo "\n $route->uri()";
             //print_r($route->parameterNames());
+            $route = $forgeRoute->route;
             $params = collect($route->parameterNames());
             $json_params = json_encode($params);
            // echo $json_params;

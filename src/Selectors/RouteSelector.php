@@ -5,6 +5,7 @@
   use Illuminate\Support\Str;
   use Illuminate\Support\Facades\URL;
   use Illuminate\Routing\RouteCollection;
+  use Tobya\SaloonForge\Extensions\ForgeRoute;
 
   class RouteSelector
   {
@@ -14,7 +15,8 @@
       {
           $this->routes = $this->getRoutes();
           return collect($this->routes)->map(function($route){
-            return $this->filterRoute($route);
+              $forgeRoute = new ForgeRoute($route);
+            return $this->filterRoute($forgeRoute);
           })->filter();
       }
 
@@ -27,10 +29,10 @@
           return \Illuminate\Support\Facades\Route::getRoutes();
       }
 
-      protected function filterRoute( $route)
+      protected function filterRoute( ForgeRoute $forgeRoute)
       {
          // print_r( $excludeMiddleware);
-
+            $route = $forgeRoute->route;
           if (config('saloonforge.routes.exclude.unnamed', false)) {
               if ($route->getName() == null) {
                   return null;
@@ -68,7 +70,7 @@
 
               }
 
-              return $route;
+              return $forgeRoute;
           }
 
 
