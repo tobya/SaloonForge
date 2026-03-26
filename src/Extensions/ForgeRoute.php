@@ -2,7 +2,9 @@
 
   namespace Tobya\SaloonForge\Extensions;
 
-  class ForgeRoute
+  use Illuminate\Routing\Route;
+
+  class ForgeRoute extends Route
   {
 
   }
