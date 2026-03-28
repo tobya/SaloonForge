@@ -11,6 +11,11 @@
         {
         }
 
+        public function getRouteName()
+        {
+            return $this->route->getName();
+        }
+
 
 
 

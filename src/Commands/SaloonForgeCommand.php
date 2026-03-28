@@ -19,7 +19,7 @@ class SaloonForgeCommand extends Command
     {
 
 
-        $RouteSelectorClass = config('saloonforge.routes.selector');
+        $RouteSelectorClass = config('saloonforge.routes.selector_class');
         $routeselector = new $RouteSelectorClass();
         // get all routes
         $rz = $routeselector->Routes();

@@ -15,7 +15,8 @@
       {
           $this->routes = $this->getRoutes();
           return collect($this->routes)->map(function($route){
-              $forgeRoute = new ForgeRoute($route);
+              $forgeRouteClass = config('saloonforge.routes.forgeroute_class');
+              $forgeRoute = new $forgeRouteClass($route);
             return $this->filterRoute($forgeRoute);
           })->filter();
       }
@@ -76,7 +77,7 @@
 
 
 
-      }
+  }
 
 
 
