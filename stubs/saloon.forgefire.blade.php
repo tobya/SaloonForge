@@ -5,9 +5,9 @@
 namespace App\Http\Integrations\{{$integration}};
 
 
-    @foreach ($requests as $request)
+ @foreach ($requests as $request)
  use App\Http\Integrations\{{$integration}}\Requests\{{$request->name}};
-        @endforeach
+ @endforeach
  use Saloon\Traits\Plugins\AcceptsJson;
  use Saloon\Http\Response;
 

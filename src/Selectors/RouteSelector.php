@@ -9,15 +9,21 @@
 
   class RouteSelector
   {
-        public  $routes = [];
+      public  $routes = [];
 
       public function Routes()
       {
+          // retrieve all routes
           $this->routes = $this->getRoutes();
+
           return collect($this->routes)->map(function($route){
+
               $forgeRouteClass = config('saloonforge.routes.forgeroute_class');
               $forgeRoute = new $forgeRouteClass($route);
-            return $this->filterRoute($forgeRoute);
+
+              // Apply filters to the route. Will return null if route
+              // should be filtered out.
+              return $this->filterRoute($forgeRoute);
           })->filter();
       }
 
@@ -32,14 +38,18 @@
 
       protected function filterRoute( ForgeRoute $forgeRoute)
       {
-         // print_r( $excludeMiddleware);
-            $route = $forgeRoute->route;
+          // retireve the actual route
+          $route = $forgeRoute->route;
+
+          // should we exclude routes that do not have a name() associated
           if (config('saloonforge.routes.exclude.unnamed', false)) {
               if ($route->getName() == null) {
                   return null;
               }
           }
 
+          // Should we exclude route based on the url containing a filter that
+          // shoudl be excluded
           foreach(config('saloonforge.routes.exclude.filter') as $filter){
               echo "\n filter: $filter  " . $route->uri() . " \n";
               if (Str::is( $filter,$route->uri(),ignoreCase: true)) {
@@ -48,6 +58,7 @@
           }
 
 
+          // Exclude via url middleware web | api  etc
           $excludeMiddleware = config('saloonforge.routes.exclude.middleware','');
           if (count($excludeMiddleware) > 0) {
                 echo $route->uri() . "\n";

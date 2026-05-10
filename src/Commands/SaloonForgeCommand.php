@@ -11,7 +11,7 @@ use Tobya\SaloonForge\Generators\RequestGenerator;
 
 class SaloonForgeCommand extends Command
 {
-    public $signature = 'saloon:forge {integration}';
+    public $signature = 'saloon:forge {integration : The name of the Integration}';
 
     public $description = 'Forge a Saloon Api from Routes ';
 
