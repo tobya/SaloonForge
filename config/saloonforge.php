@@ -7,6 +7,7 @@ return [
 
         'selector_class' => \Tobya\SaloonForge\Selectors\RouteSelector::class,
         'forgeroute_class' => \Tobya\SaloonForge\Extensions\ForgeRoute::class,
+      
         'prefix' => ['/'],
         'exclude' =>
             [

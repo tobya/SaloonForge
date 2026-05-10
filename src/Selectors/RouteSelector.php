@@ -80,10 +80,21 @@
               }
 
 
-              }
+           }
 
-              return $forgeRoute;
+          // Should we exclude route based on only certain filters should be included
+          foreach(config('saloonforge.routes.include.filter') as $filter){
+              echo "\n include filter: $filter  " . $route->uri() . " \n";
+              if (Str::is( $filter,$route->uri(),ignoreCase: true) === false  ) {
+
+                  return null;
+              }
           }
+
+
+
+           return $forgeRoute;
+      }
 
 
 
