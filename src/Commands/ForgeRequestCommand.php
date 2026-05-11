@@ -64,6 +64,7 @@ class ForgeRequestCommand extends MakeRequest
             ['method', 'm', InputOption::VALUE_REQUIRED, 'the method of the request'],
             ['route', 'r', InputOption::VALUE_REQUIRED, 'the route url of the request'],
             ['params', 'p', InputOption::VALUE_REQUIRED, 'the params of the request'],
+            ['namespace', null, InputOption::VALUE_REQUIRED, 'the namespace of the request use {integration} as placeholder'],
         ];
     }
 
@@ -84,7 +85,7 @@ class ForgeRequestCommand extends MakeRequest
     protected function buildClass($name): MakeRequest|string
     {
       //  echo "bvuild";
-       // dd('build');
+      //  dd('build');
 
         $method = $this->option('method') ?? 'GET';
 
@@ -96,19 +97,40 @@ class ForgeRequestCommand extends MakeRequest
         $stub = $this->replaceMethod($stub, $method);
         $stub = $this->replaceRoute($stub, $this->option('route','/example'));
         $stub = $this->replaceParams($stub, $this->option('params','[]'));
-
-        return $this->replaceNamespace($stub, $name)->replaceClass($stub, $name);
+        $namespace = $this->option('namespace', $name);
+        $namespace = $this->replaceIntegration($namespace);
+        echo $namespace . "| $name ----- THE NAMESPACE FOR THE REQUEST \n";
+        print_r($namespace);
+       // exit('ENDING HERE');
+        return $this->replaceNamespace($stub, $namespace)->replaceClass($stub, $namespace);
     }
 
+    protected function replaceIntegration($namespace_string): string
+    {
+         return str_replace('{integration}', $this->getIntegration(), $namespace_string);
+    }
 
     protected function replaceRoute(string $stub, string $route): string
     {
         $paramList = json_decode($this->option('params','[]'));
         if (count($paramList) > 0) {
 
-            $paramJoin = collect($paramList)->map(function($v){return "'{" . $v . "}'";})->join(',');
-            $paramVars = collect($paramList)->map(function($v){return '$this->'. $v;})->join(',');
-            $code = " return str('$route')->replace([$paramJoin],[$paramVars]);";
+            /**
+             * Must have ? version of each parameter also to match.
+             */
+            $paramJoin = collect($paramList)->map(
+                function($v){
+                    return "'{" . $v . "}','{" . $v . "?}'";
+                })->join(',');
+            $paramVars = collect($paramList)->map(
+                function($v){
+                    return '$this->'. $v . ', $this->'. $v;
+                })->join(',');
+            $code = " return str('$route')
+                             ->replace(
+                                    [$paramJoin],
+                                    [$paramVars]
+                              );";
 
             return str_replace('{{ return_route }}', $code, $stub);
         }

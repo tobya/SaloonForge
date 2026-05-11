@@ -51,6 +51,7 @@ class SaloonForgeCommand extends Command
                 '--method' => $route->methods()[0],
                 '--route' => $route->uri(),
                 '--params' => $json_params,
+                '--namespace' => 'Tobya\BCSApi\Http\Controllers\Integrations\{integration}\Requests',
             ]);
 
             $requests[] = new RequestGenerator($name, $route,$params );
