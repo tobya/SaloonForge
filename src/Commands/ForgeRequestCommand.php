@@ -99,8 +99,8 @@ class ForgeRequestCommand extends MakeRequest
         $stub = $this->replaceParams($stub, $this->option('params','[]'));
         $namespace = $this->option('namespace', $name);
         $namespace = $this->replaceIntegration($namespace);
-        echo $namespace . "| $name ----- THE NAMESPACE FOR THE REQUEST \n";
-        print_r($namespace);
+        //echo $namespace . "| $name ----- THE NAMESPACE FOR THE REQUEST \n";
+       // print_r($namespace);
        // exit('ENDING HERE');
         return $this->replaceNamespace($stub, $namespace)->replaceClass($stub, $namespace);
     }
