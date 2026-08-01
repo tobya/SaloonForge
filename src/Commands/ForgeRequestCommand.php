@@ -99,14 +99,20 @@ class ForgeRequestCommand extends MakeRequest
         $stub = $this->replaceParams($stub, $this->option('params','[]'));
         $namespace = $this->option('namespace', $name);
         $namespace = $this->replaceIntegration($namespace);
+
+        $stub = $this->replaceClass($stub, $name);
         //echo $namespace . "| $name ----- THE NAMESPACE FOR THE REQUEST \n";
-       // print_r($namespace);
+       ray($namespace);
        // exit('ENDING HERE');
-        return $this->replaceNamespace($stub, $namespace)->replaceClass($stub, $namespace);
+            //$this->replaceNamespace($stub, $namespace)->replaceClass($stub, $name);
+            $stub = $this->replaceThisNamespace($stub, $namespace);
+        return $stub;
     }
 
     protected function replaceIntegration($namespace_string): string
     {
+        ray('{integration}', $this->getIntegration(), $namespace_string);
+        ray(str_replace('{integration}', $this->getIntegration(), $namespace_string));
          return str_replace('{integration}', $this->getIntegration(), $namespace_string);
     }
 
@@ -148,6 +154,12 @@ class ForgeRequestCommand extends MakeRequest
 
         }
         return str_replace('{{ params }}', $code, $stub);
+    }
+
+    protected function replaceThisNamespace(string $stub, string $providednamespace): string
+    {
+
+        return str_replace('{{ namespace }}', $providednamespace, $stub);
     }
 
     protected function getStub()

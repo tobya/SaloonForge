@@ -39,20 +39,24 @@ class SaloonForgeCommand extends Command
                 $name = str($route->getName())->replace(['.', '-', ' '], ['', '', '']);
             } else {
 
-                $name = str($route->uri())->slug();
+                $name = str($route->uri())->title()->replace(['.', '-', ' '], ['', '', '']) ;
             }
             if ($route->uri() == '/') {
                 continue;
             }
 
-            $this->info('Creating Forge Request for ' .  $route->uri() ) ;
-            Artisan::call('saloon:forgerequest', ['integration' => $integration,
-                'name' => $name,
+
+
+            $forgeRequestParameters = ['integration' => $integration,
+                'name' => $name->toString(),
                 '--method' => $route->methods()[0],
                 '--route' => $route->uri(),
                 '--params' => $json_params,
-                '--namespace' => 'Tobya\BCSApi\Http\Controllers\Integrations\{integration}\Requests',
-            ]);
+                '--namespace' => 'App\Http\Integrations\{integration}\Requests',
+            ];
+            ray($forgeRequestParameters);
+            $this->info('Creating Forge Request for ' .  $route->uri() ) ;
+            Artisan::call('saloon:forgerequest', $forgeRequestParameters);
 
             $requests[] = new RequestGenerator($name, $route,$params );
 
