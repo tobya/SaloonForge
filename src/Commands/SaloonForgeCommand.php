@@ -39,7 +39,8 @@ class SaloonForgeCommand extends Command
                 $name = str($route->getName())->replace(['.', '-', ' '], ['', '', '']);
             } else {
 
-                $name = str($route->uri())->title()->replace(['.', '-', ' '], ['', '', '']) ;
+                $name = str($route->uri())->title()->replace(['.', '-', ' ','/','\\','{','}','?'],
+                                ['', '','', '','', '','', '',]) ;
             }
             if ($route->uri() == '/') {
                 continue;
