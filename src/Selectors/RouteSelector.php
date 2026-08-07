@@ -4,6 +4,7 @@
 
   use Illuminate\Support\Str;
   use Illuminate\Support\Facades\URL;
+  use Illuminate\Support\Facades\Log;
   use Illuminate\Routing\RouteCollection;
   use Tobya\SaloonForge\Extensions\ForgeRoute;
 
@@ -44,6 +45,7 @@
           // should we exclude routes that do not have a name() associated
           if (config('saloonforge.routes.exclude.unnamed', false)) {
               if ($route->getName() == null) {
+                  Log::debug('excluding Route no name ' . $route->uri() );
                   return null;
               }
           }
@@ -53,6 +55,7 @@
           foreach(config('saloonforge.routes.exclude.filter') as $filter){
               echo "\n filter: $filter  " . $route->uri() . " \n";
               if (Str::is( $filter,$route->uri(),ignoreCase: true)) {
+                  Log::debug('excluding Route via filter ' . $route->uri() );
                   return null;
               }
           }
@@ -76,6 +79,7 @@
               //  dd($matches);
               if ($matches ) {
                   echo "\n REturn null";
+                  Log::debug('excluding Route no middle matches ' . $route->uri() );
                   return null;
               }
 
@@ -86,7 +90,7 @@
           foreach(config('saloonforge.routes.include.filter') as $filter){
               echo "\n include filter: $filter  " . $route->uri() . " \n";
               if (Str::is( $filter,$route->uri(),ignoreCase: true) === false  ) {
-
+Log::debug('excluding Route include filter ' . $route->uri() );
                   return null;
               }
           }
