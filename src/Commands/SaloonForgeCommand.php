@@ -4,6 +4,7 @@ namespace Tobya\SaloonForge\Commands;
 
 use Saloon\Http\Response;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Artisan;
 use Tobya\SaloonForge\Generators\RequestGenerator;
@@ -20,15 +21,17 @@ class SaloonForgeCommand extends Command
 
 
         $RouteSelectorClass = config('saloonforge.routes.selector_class');
+        ray('this is a config ', config('saloonforge.routes.selector_class'));
         $routeselector = new $RouteSelectorClass();
         // get all routes
         $rz = $routeselector->Routes();
-       // print_r($rz);
+        ray($rz);
+        Log::debug('rz',[$rz]);
       //  die();
         $requests = [];
         $integration = $this->argument('integration');
         foreach ($rz as $forgeRoute) {
-           // echo "\n $route->uri()";
+           ray( "zing -- $forgeRoute->uri()");
             //print_r($route->parameterNames());
             $route = $forgeRoute->route;
             $params = collect($route->parameterNames());
