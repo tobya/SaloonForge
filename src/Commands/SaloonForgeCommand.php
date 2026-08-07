@@ -37,20 +37,19 @@ class SaloonForgeCommand extends Command
         $requests = [];
         $integration = $this->argument('integration');
         foreach ($rz as $forgeRoute) {
-           //ray( "zing -- $forgeRoute->uri()");
-            //print_r($route->parameterNames());
+
             $route = $forgeRoute->route;
             $params = collect($route->parameterNames());
             $json_params = json_encode($params);
-           // echo $json_params;
-            if ($route->getName() != null) {
 
+            if ($route->getName() != null) {
                 $name = str($route->getName())->replace(['.', '-', ' '], ['', '', '']);
             } else {
-
-                $name = str($route->uri())->title()->replace(['.', '-', ' ','/','\\','{','}','?'],
-                                ['', '','', '','', '','', '',]) ;
+                $name = str($route->uri())->title()
+                            ->replace(  ['.', '-', ' ','/','\\','{','}','?'],
+                                        ['', '','', '','', '','', '',]) ;
             }
+            
             if ($route->uri() == '/') {
                 continue;
             }
