@@ -49,7 +49,7 @@ class SaloonForgeCommand extends Command
                             ->replace(  ['.', '-', ' ','/','\\','{','}','?'],
                                         ['', '','', '','', '','', '',]) ;
             }
-            
+
             if ($route->uri() == '/') {
                 continue;
             }

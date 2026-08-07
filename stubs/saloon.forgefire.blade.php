@@ -39,7 +39,8 @@ class {{$integration}}
       }
 
     @foreach ($requests as $request)
-      /**
+        @comment('this is correct indentation')
+    /**
         * {{$request->name}}
         * @return Response | {{$request->name}}
         */
