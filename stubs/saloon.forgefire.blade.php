@@ -10,6 +10,7 @@ namespace App\Http\Integrations\{{$integration}};
  @endforeach
  use Saloon\Traits\Plugins\AcceptsJson;
  use Saloon\Http\Response;
+ use Saloon\Http\Request;
 
 class {{$integration}}
 {
@@ -47,7 +48,7 @@ class {{$integration}}
 
             $request = new {{$request->name}}({{$request->parameterlist()}});
 
-            // dont send request just return the request to caller.
+            // don't actually send request to server, just return the request to caller.
             if ($this->shouldReturnRequest){
                 return $request;
             }
