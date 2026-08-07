@@ -2,11 +2,11 @@
 
 
 
-namespace App\Http\Integrations\{{$integration}};
+namespace {{$namespace}}\{{$integration}};
 
 
  @foreach ($requests as $request)
- use App\Http\Integrations\{{$integration}}\Requests\{{$request->name}};
+ use {{$namespace}}\{{$integration}}\Requests\{{$request->name}};
  @endforeach
  use Saloon\Traits\Plugins\AcceptsJson;
  use Saloon\Http\Response;

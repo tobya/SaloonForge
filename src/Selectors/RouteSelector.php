@@ -12,11 +12,13 @@
   {
 
       protected $forgeRouteClass = null;
+      protected $integration = null;
 
       public  $routes = [];
 
       public function __construct(string $integration)
       {
+          $this->integration = $integration;
           $this->forgeRouteClass =   config("saloonforge.integrations.$integration.routes.forgeroute_class");
 
       }
@@ -28,12 +30,13 @@
 
           return collect($this->routes)->map(function($route){
 
-
               $forgeRoute = new $this->forgeRouteClass($route);
 
               // Apply filters to the route. Will return null if route
               // should be filtered out.
+
               return $this->filterRoute($forgeRoute);
+
           })->filter();
       }
 
@@ -61,7 +64,7 @@
 
           // Should we exclude route based on the url containing a filter that
           // shoudl be excluded
-          foreach(config('saloonforge.routes.exclude.filter') as $filter){
+          foreach($this->config('routes.exclude.filter') as $filter){
               echo "\n filter: $filter  " . $route->uri() . " \n";
               if (Str::is( $filter,$route->uri(),ignoreCase: true)) {
                   Log::debug('excluding Route via filter ' . $route->uri() );
@@ -71,7 +74,7 @@
 
 
           // Exclude via url middleware web | api  etc
-          $excludeMiddleware = config('saloonforge.routes.exclude.middleware','');
+          $excludeMiddleware = $this->config('routes.exclude.middleware','');
           if (count($excludeMiddleware) > 0) {
                 echo $route->uri() . "\n";
               $middlewares = $route->middleware();
@@ -96,7 +99,7 @@
            }
 
           // Should we exclude route based on only certain filters should be included
-          foreach(config('saloonforge.routes.include.filter') as $filter){
+          foreach($this->config('routes.include.filter') as $filter){
               echo "\n include filter: $filter  " . $route->uri() . " \n";
               if (Str::is( $filter,$route->uri(),ignoreCase: true) === false  ) {
 Log::debug('excluding Route include filter ' . $route->uri() );
@@ -109,7 +112,12 @@ Log::debug('excluding Route include filter ' . $route->uri() );
            return $forgeRoute;
       }
 
+      protected function config(string $string) : mixed
+      {
+           $config_path = 'saloonforge.integrations.' . $this->integration ;
+          return config($config_path . '.' . $string);
 
+      }
 
 
   }
