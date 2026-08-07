@@ -21,17 +21,23 @@ class SaloonForgeCommand extends Command
 
 
         $RouteSelectorClass = config('saloonforge.routes.selector_class');
-        ray('this is a config ', config('saloonforge.routes.selector_class'));
+        Log::debug('this is a config ');
+        Log::debug('this is a config ',[ config('saloonforge.routes.selector_class')]);
         $routeselector = new $RouteSelectorClass();
+
+
         // get all routes
         $rz = $routeselector->Routes();
-        ray($rz);
-        Log::debug('rz',[$rz]);
+      //  Log::debug('rout select ', [$routeselector]);
+      //  ray($rz);asdfasdf
+
+
+     //   Log::debug('rz',[$rz]);
       //  die();
         $requests = [];
         $integration = $this->argument('integration');
         foreach ($rz as $forgeRoute) {
-           ray( "zing -- $forgeRoute->uri()");
+           //ray( "zing -- $forgeRoute->uri()");
             //print_r($route->parameterNames());
             $route = $forgeRoute->route;
             $params = collect($route->parameterNames());
@@ -70,7 +76,7 @@ class SaloonForgeCommand extends Command
                 'name' => $integration . 'Connector',
             ]);
 
-            $this->info('Creating API Class for ' . $integration);
+            $this->info('Creating API Class for   ' . $integration);
         $newfire = Blade::render(file_get_contents(__DIR__ . '/../../stubs/saloon.forgefire.blade.php'),
             [
                 'integration' => $integration,
