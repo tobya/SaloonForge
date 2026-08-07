@@ -40,6 +40,9 @@ return [
 
         ],
          'namespace' => 'App\Http\Integrations\{integration}',
+          'output' => [
+              'dir' => base_path('Integrations/'),
+          ]
 
       ]
     ],

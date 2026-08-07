@@ -58,9 +58,9 @@ class SaloonForgeCommand extends Command
             }
 
 
-            $namespace = Str(config($config_path . '.namespace') )->finish('\\') . '\Requests' ;
+            $namespace = Str(config($config_path . '.namespace') )->finish('\\') . 'Requests' ;
 
-            $forgeRequestParameters = ['integration' => $integration,
+            $forgeRequestParameters = ['integration' => STR($integration)->title()->toString(),
                 'name' => $name->toString(),
                 '--method' => $route->methods()[0],
                 '--route' => $route->uri(),
@@ -84,7 +84,7 @@ class SaloonForgeCommand extends Command
             [
                 'integration' => $integration,
                 'requests' => $requests]);
-        file_put_contents(app_path( '/Http/Integrations/'. $integration   . '/' . $integration . '.php'  ), $newfire);
+        file_put_contents( str(config($config_path .'.output.dir'))->finish('/')  . $integration . '.php'  , $newfire);
             return 0;
     }
 }
