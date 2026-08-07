@@ -10,7 +10,16 @@
 
   class RouteSelector
   {
+
+      protected $forgeRouteClass = null;
+
       public  $routes = [];
+
+      public function __construct(string $integration)
+      {
+          $this->forgeRouteClass =   config("saloonforge.integrations.$integration.routes.forgeroute_class");
+
+      }
 
       public function Routes()
       {
@@ -19,8 +28,8 @@
 
           return collect($this->routes)->map(function($route){
 
-              $forgeRouteClass = config('saloonforge.routes.forgeroute_class');
-              $forgeRoute = new $forgeRouteClass($route);
+
+              $forgeRoute = new $this->forgeRouteClass($route);
 
               // Apply filters to the route. Will return null if route
               // should be filtered out.

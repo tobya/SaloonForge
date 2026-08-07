@@ -19,11 +19,14 @@ class SaloonForgeCommand extends Command
     public function handle(): int
     {
 
+        $integration = $this->argument('integration');
+        $config_path = 'saloonforge.integrations.' . $integration ;
 
-        $RouteSelectorClass = config('saloonforge.routes.selector_class');
-        Log::debug('this is a config ');
-        Log::debug('this is a config ',[ config('saloonforge.routes.selector_class')]);
-        $routeselector = new $RouteSelectorClass();
+        $RouteSelectorClass = config( $config_path . '.routes.selector_class');
+        Log::debug('this is a config ',[$config_path, $integration]);
+        Log::debug('this is a config ',[ config( $config_path . '.routes.selector_class')]);
+        Log::debug('this is a config ',[$RouteSelectorClass]);
+        $routeselector = new $RouteSelectorClass($integration);
 
 
         // get all routes
@@ -35,7 +38,7 @@ class SaloonForgeCommand extends Command
      //   Log::debug('rz',[$rz]);
       //  die();
         $requests = [];
-        $integration = $this->argument('integration');
+
         foreach ($rz as $forgeRoute) {
 
             $route = $forgeRoute->route;
@@ -55,13 +58,14 @@ class SaloonForgeCommand extends Command
             }
 
 
+            $namespace = Str(config($config_path . '.namespace') )->finish('\\') . '\Requests' ;
 
             $forgeRequestParameters = ['integration' => $integration,
                 'name' => $name->toString(),
                 '--method' => $route->methods()[0],
                 '--route' => $route->uri(),
                 '--params' => $json_params,
-                '--namespace' => 'App\Http\Integrations\{integration}\Requests',
+                '--namespace' =>  $namespace //'App\Http\Integrations\{integration}\Requests',
             ];
             ray($forgeRequestParameters);
             $this->info('Creating Forge Request for ' .  $route->uri() ) ;
