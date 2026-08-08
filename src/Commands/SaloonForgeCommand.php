@@ -2,6 +2,7 @@
 
 namespace Tobya\SaloonForge\Commands;
 
+use IntlChar;
 use Saloon\Http\Response;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -20,6 +21,15 @@ class SaloonForgeCommand extends Command
     {
 
         $integration = $this->argument('integration');
+
+        if (ctype_lower(substr($integration, 0, 1)))
+        {
+            $this->error('Integration must start with an uppercase letter');
+            return self::FAILURE;
+        }
+
+
+
         $config_path = 'saloonforge.integrations.' . $integration ;
 
         $RouteSelectorClass = config( $config_path . '.routes.selector_class');
@@ -58,14 +68,16 @@ class SaloonForgeCommand extends Command
             }
 
 
-            $namespace = Str(config($config_path . '.namespace') )->finish('\\') . 'Requests' ;
+            $namespace = config($config_path . '.namespace');
+            $namespace_withRequest = Str($namespace )->finish('\\')     . 'Requests' ;
 
             $forgeRequestParameters = ['integration' => STR($integration)->title()->toString(),
                 'name' => $name->toString(),
                 '--method' => $route->methods()[0],
                 '--route' => $route->uri(),
                 '--params' => $json_params,
-                '--namespace' =>  $namespace //'App\Http\Integrations\{integration}\Requests',
+                '--namespace' =>  $namespace_withRequest, //'App\Http\Integrations\{integration}\Requests',
+                '--force' => true,
             ];
             ray($forgeRequestParameters);
             $this->info('Creating Forge Request for ' .  $route->uri() ) ;
@@ -80,11 +92,15 @@ class SaloonForgeCommand extends Command
             ]);
 
             $this->info('Creating API Class for   ' . $integration);
-        $newfire = Blade::render(file_get_contents(__DIR__ . '/../../stubs/saloon.forgefire.blade.php'),
-            [
-                'integration' => $integration,
-                'requests' => $requests]);
-        file_put_contents( str(config($config_path .'.output.dir'))->finish('/')  . $integration . '.php'  , $newfire);
+            $newfire = Blade::render(file_get_contents(__DIR__ . '/../../stubs/saloon.forgefire.blade.php'),
+                                        [
+                                            'integration' => $integration,
+                                            'requests' => $requests,
+                                            'namespace' => $namespace,
+                                            'namespace_withrequest' => $namespace_withRequest,
+                                        ]);
+
+        file_put_contents( app_path( '/Http/Integrations/'. $integration   . '/' )  . $integration . 'Api.php'  , $newfire);
             return 0;
     }
 }
