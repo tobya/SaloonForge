@@ -5,8 +5,11 @@ namespace {{ namespace }};
 use Saloon\Enums\Method;
 
 
-class {{ class }} extends \Saloon\Http\Request
+class {{ class }} extends \Saloon\Http\Request  // implements Cacheable
 {
+      // to use  caching uncomment lines and methods and some changes xxx
+      // use HasCaching;
+
     /**
      * The HTTP method of the request
      */
@@ -25,4 +28,18 @@ class {{ class }} extends \Saloon\Http\Request
     {
         {{ return_route }}
     }
+
+/**
+* CACHING
+* If you wish to implement caching , you can uncomment these two methods, the implements and has statements above.
+*/
+  //public function resolveCacheDriver(): Driver
+  // {
+  //     return new LaravelCacheDriver(Cache::store(config('cache.default')));
+  // }
+
+  // public function cacheExpiryInSeconds(): int
+  // {
+  //     return 300;
+  // }
 }

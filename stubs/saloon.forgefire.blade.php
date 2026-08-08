@@ -2,11 +2,13 @@
 
 
 
-namespace App\Http\Integrations\{{$integration}};
+namespace {{$namespace}};
+
 
 
  @foreach ($requests as $request)
- use App\Http\Integrations\{{$integration}}\Requests\{{$request->name}};
+// use App\Http\Integrations\{{$integration}}\Requests\{{$request->name}};
+  use {{$namespace_withrequest}}\{{$request->name}};
  @endforeach
  use Saloon\Traits\Plugins\AcceptsJson;
  use Saloon\Http\Response;
@@ -14,6 +16,7 @@ namespace App\Http\Integrations\{{$integration}};
 
 class {{$integration}}
 {
+
       protected {{$integration}}Connector $connector;
      /**
      * @var null | Request
@@ -60,6 +63,7 @@ class {{$integration}}
 
 
     @endforeach
+
 
 
 
