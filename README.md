@@ -1,4 +1,4 @@
-# Autogenerate Connectors and Requsts from Routes
+# Autogenerate Connectors and Requests from Routes
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/tobya/saloonforge.svg?style=flat-square)](https://packagist.org/packages/tobya/saloonforge)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/tobya/saloonforge/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/tobya/saloonforge/actions?query=workflow%3Arun-tests+branch%3Amain)
