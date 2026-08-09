@@ -4,10 +4,12 @@ namespace Tobya\SaloonForge\Commands;
 
 use IntlChar;
 use Saloon\Http\Response;
+use Illuminate\Http\File;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Storage;
 use Tobya\SaloonForge\Generators\RequestGenerator;
 
 
@@ -16,11 +18,17 @@ class SaloonForgeCommand extends Command
     public $signature = 'saloon:forge {integration : The name of the Integration}';
 
     public $description = 'Forge a Saloon Api from Routes ';
+    protected string $config_path;
+    /**
+     * @var array|array[]|bool|bool[]|float|float[]|int|int[]|null[]|string|string[]|null
+     */
+    protected string|array|bool|int|null|float $integration;
 
     public function handle(): int
     {
 
         $integration = $this->argument('integration');
+        $this->integration = $integration;
 
         if (ctype_lower(substr($integration, 0, 1)))
         {
@@ -31,6 +39,8 @@ class SaloonForgeCommand extends Command
 
 
         $config_path = 'saloonforge.integrations.' . $integration ;
+        $this->config_path = $config_path;
+
 
         $RouteSelectorClass = config( $config_path . '.routes.selector_class');
         Log::debug('this is a config ',[$config_path, $integration]);
@@ -101,6 +111,45 @@ class SaloonForgeCommand extends Command
                                         ]);
 
         file_put_contents( app_path( '/Http/Integrations/'. $integration   . '/' )  . $integration . 'Api.php'  , $newfire);
+        $this->CopyOnFinish();
             return 0;
+    }
+
+    private function CopyOnFinish()
+    {
+        $shouldCopy = config($this->config_path . '.output.copy.active');
+        if ($shouldCopy) {
+            $destination = config($this->config_path . '.output.copy.destination');
+        }
+
+        $fileStore = Storage::build(  [
+            'driver' => 'local',
+            'root' => app_path('/Http/Integrations/'. $this->integration),
+            'throw' => false,
+        ]);
+
+        $destinationStore =          Storage::build(  [
+            'driver' => 'local',
+            'root' => $destination,
+            'throw' => false,
+        ]);
+
+      //  print_r($fileStore->path('/'));
+      //  print_r($destinationStore->path('/'));
+        // List all the files from a folder
+        $files = $fileStore->allFiles('/');
+      //  dd(json_encode($files));
+        $this->info('Copying files for ' .  $this->integration . ' to ' .  $destination);
+        // Using normal get and put (the whole file string at once)
+        foreach($files as $file) {
+          //  dd($file);
+            $this->info($file );
+           $s = $destinationStore->put(
+                $file,
+                $fileStore->get($file)
+            );
+          //  dd($s);
+        }
+
     }
 }
