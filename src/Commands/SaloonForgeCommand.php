@@ -62,15 +62,19 @@ class SaloonForgeCommand extends Command
         foreach ($rz as $forgeRoute) {
 
             $route = $forgeRoute->route;
+           echo $route->uri();
+          //  echo $route->prefix() . "\n";
             $params = collect($route->parameterNames());
             $json_params = json_encode($params);
 
             if ($route->getName() != null) {
                 $name = str($route->getName())->replace(['.', '-', ' '], ['', '', '']);
+                $this->info(' not name:' . $name);
             } else {
                 $name = str($route->uri())->title()
                             ->replace(  ['.', '-', ' ','/','\\','{','}','?'],
                                         ['', '','', '','', '','', '',]) ;
+                $this->info(' name:' . $name);
             }
 
             if ($route->uri() == '/') {
