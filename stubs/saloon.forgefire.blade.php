@@ -6,15 +6,15 @@ namespace {{$namespace}};
 
 
 
+ use {{$namespace}}\{{$integration}}Connector;
  @foreach ($requests as $request)
-// use App\Http\Integrations\{{$integration}}\Requests\{{$request->name}};
   use {{$namespace_withrequest}}\{{$request->name}};
  @endforeach
  use Saloon\Traits\Plugins\AcceptsJson;
  use Saloon\Http\Response;
  use Saloon\Http\Request;
 
-class {{$integration}}
+class {{$integration}}Api
 {
 
       protected {{$integration}}Connector $connector;

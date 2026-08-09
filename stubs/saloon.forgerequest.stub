@@ -3,6 +3,8 @@
 namespace {{ namespace }};
 
 use Saloon\Enums\Method;
+use Saloon\CachePlugin\Traits\HasCaching;
+use Saloon\CachePlugin\Contracts\Cacheable;
 
 
 class {{ class }} extends \Saloon\Http\Request  // implements Cacheable
@@ -33,13 +35,16 @@ class {{ class }} extends \Saloon\Http\Request  // implements Cacheable
 * CACHING
 * If you wish to implement caching , you can uncomment these two methods, the implements and has statements above.
 */
-  //public function resolveCacheDriver(): Driver
-  // {
-  //     return new LaravelCacheDriver(Cache::store(config('cache.default')));
-  // }
 
-  // public function cacheExpiryInSeconds(): int
-  // {
-  //     return 300;
-  // }
+/*
+    public function resolveCacheDriver(): Driver
+     {
+         return new LaravelCacheDriver(Cache::store(config('cache.default')));
+     }
+
+     public function cacheExpiryInSeconds(): int
+     {
+         return 300;
+     }
+*/
 }
