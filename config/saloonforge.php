@@ -4,11 +4,21 @@
 return [
 
     'integrations' => [
-      'default' => [
+
+        /**
+         * Integration
+         * This is the default integration, you can make more.  This must match (case sensitive)
+         * from the commandline the integration you wish to run.
+         */
+
+      'Default' => [
 
 
         'routes' => [
 
+            /*
+             * If you need complex route selection, you can use a custom Selector class.
+             */
             'selector_class' => \Tobya\SaloonForge\Selectors\RouteSelector::class,
             'forgeroute_class' => \Tobya\SaloonForge\Extensions\ForgeRoute::class,
 
@@ -40,9 +50,26 @@ return [
 
         ],
          'namespace' => 'App\Http\Integrations\{integration}',
+
+          /*
+           * Output Settings
+           */
+
           'output' => [
-              'dir' => base_path('Integrations/'),
+
+
+              /*
+               * Copy on Finish
+               * Saloon forge is run on a api web app that contains the routes that need to be generated.
+               * However the wrapper is a seperte project.  So copy the files at the end of
+               * generation to another directory.  You may need to edit Connector.
+               */
+              'copy' => [
+                  'active' => false,
+                  'destination' => '',
+              ]
           ]
+
 
       ]
     ],
