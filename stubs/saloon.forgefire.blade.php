@@ -42,7 +42,7 @@ class {{$integration}}Api
       }
 
     @foreach ($requests as $request)
-        @comment('this is correct indentation')
+        {{-- this is correct indentation --}}
     /**
         * {{$request->name}}
         * @return Response | {{$request->name}}
