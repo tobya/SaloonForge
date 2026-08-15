@@ -128,7 +128,7 @@ class SaloonForgeCommand extends Command
 
         $fileStore = Storage::build(  [
             'driver' => 'local',
-            'root' => app_path('/Http/Integrations/'. $this->integration),
+            'root' =>  config('saloon.integrations_path') . $this->integration,
             'throw' => false,
         ]);
 
