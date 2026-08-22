@@ -111,10 +111,15 @@ class SaloonForgeCommand extends Command
                                             'namespace' => $namespace,
                                             'namespace_withrequest' => $namespace_withRequest,
                                         ]);
-        echo str(config('saloon.integrations_path'))->finish('/')  . $integration . 'Api.php';
+       // echo str(config('saloon.integrations_path'))->finish('/')  . $integration . 'Api.php';
+
+        // Create the fireapi.php file .
         file_put_contents( str(config('saloon.integrations_path'))->finish('/')  . $integration . '/' . $integration . 'Api.php'  , $newfire);
+
+        // if required copy to the sepcifeid destination
         $this->CopyOnFinish();
-            return 0;
+
+        return 0;
     }
 
     private function CopyOnFinish()
@@ -136,21 +141,21 @@ class SaloonForgeCommand extends Command
             'throw' => false,
         ]);
 
-      //  print_r($fileStore->path('/'));
-      //  print_r($destinationStore->path('/'));
+
         // List all the files from a folder
         $files = $fileStore->allFiles('/');
-       // dd(json_encode($files));
+
         $this->info('Copying files for ' .  $this->integration . ' to ' .  $destination);
+
         // Using normal get and put (the whole file string at once)
         foreach($files as $file) {
-          //  dd($file);
+
             $this->info($file );
-           $s = $destinationStore->put(
-                $file,
-                $fileStore->get($file)
-            );
-          //  dd($s);
+            $destinationStore->put(
+                    $file,
+                    $fileStore->get($file)
+                );
+          
         }
 
     }
