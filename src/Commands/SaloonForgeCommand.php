@@ -43,9 +43,7 @@ class SaloonForgeCommand extends Command
 
 
         $RouteSelectorClass = config( $config_path . '.routes.selector_class');
-        Log::debug('this is a config ',[$config_path, $integration]);
-        Log::debug('this is a config ',[ config( $config_path . '.routes.selector_class')]);
-        Log::debug('this is a config ',[$RouteSelectorClass]);
+
         $routeselector = new $RouteSelectorClass($integration);
 
 
@@ -93,7 +91,7 @@ class SaloonForgeCommand extends Command
                 '--namespace' =>  $namespace_withRequest, //'App\Http\Integrations\{integration}\Requests',
                 '--force' => true,
             ];
-            ray($forgeRequestParameters);
+
             $this->info('Creating Forge Request for ' .  $route->uri() ) ;
             Artisan::call('saloon:forgerequest', $forgeRequestParameters);
 
@@ -142,7 +140,7 @@ class SaloonForgeCommand extends Command
       //  print_r($destinationStore->path('/'));
         // List all the files from a folder
         $files = $fileStore->allFiles('/');
-      //  dd(json_encode($files));
+       // dd(json_encode($files));
         $this->info('Copying files for ' .  $this->integration . ' to ' .  $destination);
         // Using normal get and put (the whole file string at once)
         foreach($files as $file) {
