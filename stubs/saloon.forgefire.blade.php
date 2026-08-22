@@ -14,7 +14,10 @@ namespace {{$namespace}};
  use Saloon\Http\Response;
  use Saloon\Http\Request;
 
-class {{$integration}}Api
+// Client library must composer require tobya/saloon
+ // use Tobya\Saloon\SaloonFire;
+
+class {{$integration}}Api extends Tobya\Saloon\SaloonFire
 {
 
       protected {{$integration}}Connector $connector;
@@ -52,7 +55,11 @@ class {{$integration}}Api
 
             $request = new {{$request->name}}({{$request->parameterlist()}});
 
-            // don't actually send request to server, just return the request to caller.
+            // apply any modifiers
+            $request = $this->applymodifiers($request);
+
+            // if getRequest() has been called, don't actually send request to server,
+            // just return the request to caller.
             if ($this->shouldReturnRequest){
                 return $request;
             }
