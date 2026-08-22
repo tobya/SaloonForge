@@ -111,8 +111,8 @@ class SaloonForgeCommand extends Command
                                             'namespace' => $namespace,
                                             'namespace_withrequest' => $namespace_withRequest,
                                         ]);
-
-        file_put_contents( app_path( '/Http/Integrations/'. $integration   . '/' )  . $integration . 'Api.php'  , $newfire);
+        echo str(config('saloon.integrations_path'))->finish('/')  . $integration . 'Api.php';
+        file_put_contents( str(config('saloon.integrations_path'))->finish('/')  . $integration . '/' . $integration . 'Api.php'  , $newfire);
         $this->CopyOnFinish();
             return 0;
     }
