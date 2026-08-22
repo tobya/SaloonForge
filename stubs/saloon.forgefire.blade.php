@@ -17,7 +17,7 @@ namespace {{$namespace}};
 // Client library must composer require tobya/saloon
  // use Tobya\Saloon\SaloonFire;
 
-class {{$integration}}Api extends Tobya\Saloon\SaloonFire
+class {{$integration}}Api extends \Tobya\Saloon\SaloonFire
 {
 
       protected {{$integration}}Connector $connector;
