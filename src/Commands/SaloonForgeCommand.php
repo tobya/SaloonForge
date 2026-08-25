@@ -155,7 +155,7 @@ class SaloonForgeCommand extends Command
                     $file,
                     $fileStore->get($file)
                 );
-          
+
         }
 
     }
