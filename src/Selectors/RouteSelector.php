@@ -76,9 +76,9 @@
           // Exclude via url middleware web | api  etc
           $excludeMiddleware = $this->config('routes.exclude.middleware','');
           if (count($excludeMiddleware) > 0) {
-                echo $route->uri() . "\n";
+              //  echo $route->uri() . "\n";
               $middlewares = $route->middleware();
-              print_r($middlewares);
+             // print_r($middlewares);
               $matches = collect($middlewares)->contains(function ($m) use ($excludeMiddleware) {
 
                   if (strtolower($m) === strtolower($excludeMiddleware[0])) {
