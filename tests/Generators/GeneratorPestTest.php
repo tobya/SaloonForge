@@ -20,7 +20,7 @@ it('can returns parameter list with no keys ', function () {
 
 it('can returns parameter list with route ', function () {
 
-    $r = \Illuminate\Support\Facades\Route::get('/tests1',[])->name('test1');
+    $r = \Illuminate\Support\Facades\Route::get('/tests1',[\Tobya\SaloonForge\Tests\TestController::class, 'test'])->name('test1');
 
 
       $list = [ 'unique2',  uniqid(),  65];
