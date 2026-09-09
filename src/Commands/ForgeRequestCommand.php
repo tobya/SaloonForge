@@ -110,8 +110,8 @@ class ForgeRequestCommand extends MakeRequest
 
     protected function replaceIntegration($namespace_string): string
     {
-        ray('{integration}', $this->getIntegration(), $namespace_string);
-        ray(str_replace('{integration}', $this->getIntegration(), $namespace_string));
+     //   ray('{integration}', $this->getIntegration(), $namespace_string);
+       // ray(str_replace('{integration}', $this->getIntegration(), $namespace_string));
          return str_replace('{integration}', $this->getIntegration(), $namespace_string);
     }
 
