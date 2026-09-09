@@ -16,6 +16,8 @@
 
       public  $routes = [];
 
+      const string EmptyConfigValue = 'THIS IS A MISSING VALUE';
+
       public function __construct(string $integration)
       {
           $this->integration = $integration;
@@ -115,8 +117,14 @@ Log::debug('excluding Route include filter ' . $route->uri() );
       protected function config(string $string) : mixed
       {
            $config_path = 'saloonforge.integrations.' . $this->integration ;
-          return config($config_path . '.' . $string);
+          $integration_config_value = config($config_path . '.' . $string,self::EmptyConfigValue);
 
+          if ($integration_config_value == self::EmptyConfigValue) {
+              $config_path = 'saloonforge.integrations.Default' ;
+              $integration_config_value = config($config_path . '.' . $string);
+          }
+
+          return $integration_config_value;
       }
 
 

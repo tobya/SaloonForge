@@ -11,10 +11,10 @@ it('can get  routes', function () {
 });
 
 
-it('can get  routes added', function () {
-    \Illuminate\Support\Facades\Config::set("saloonforge.integrations.Default.routes.forgeroute_class" , \Tobya\SaloonForge\Extensions\ForgeRoute::class);
+it('can get  routes added with integration', function ($integration) {
+    \Illuminate\Support\Facades\Config::set("saloonforge.integrations.$integration.routes.forgeroute_class" , \Tobya\SaloonForge\Extensions\ForgeRoute::class);
     //echo config("saloonforge.integrations.Default.routes.forgeroute_class");
-    $rs = new \Tobya\SaloonForge\Selectors\RouteSelector('Default');
+    $rs = new \Tobya\SaloonForge\Selectors\RouteSelector($integration);
     $routes = $rs->Routes();
    // echo $routes->count() . PHP_EOL;
 
@@ -31,4 +31,7 @@ it('can get  routes added', function () {
    // echo $routes->count() . PHP_EOL;
     expect($routes_added)->toBeObject();
     expect($routes_added->count())->toBeGreaterThan($routes->count());
-});
+})->with([
+    'test',
+    'Default',
+]);
