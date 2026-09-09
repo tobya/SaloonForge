@@ -42,6 +42,7 @@ return [
                 ],
             'include' => [
                 'middleware' => ['web'],
+                'filter' =>        [],
                 'route-parameters' => [
                     'any' =>    [],
                     'all' => [],  // not implemented
