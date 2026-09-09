@@ -16,7 +16,7 @@ use Saloon\CachePlugin\Drivers\LaravelCacheDriver;
 class {{ class }} extends \Saloon\Http\Request  // implements Cacheable
 {
       // CACHING
-      // to use  caching uncomment lines and methods and some changes
+      // to use  caching uncomment lines and methods and has
       // [ ] implements
       // [ ] methods
       // [ ] has
