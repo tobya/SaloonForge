@@ -57,7 +57,7 @@
           $route = $forgeRoute->route;
 
           // should we exclude routes that do not have a name() associated
-          if (config('saloonforge.routes.exclude.unnamed', false)) {
+          if ($this->config('routes.exclude.unnamed', false)) {
               if ($route->getName() == null) {
                   Log::debug('excluding Route no name ' . $route->uri() );
                   return null;
