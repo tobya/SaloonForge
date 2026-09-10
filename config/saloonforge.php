@@ -22,7 +22,8 @@ return [
             'selector_class' => \Tobya\SaloonForge\Selectors\RouteSelector::class,
             'forgeroute_class' => \Tobya\SaloonForge\Extensions\ForgeRoute::class,
 
-            'prefix' => ['/'],
+
+
             'exclude' =>
                 [
                     /**
@@ -61,8 +62,8 @@ return [
 
               /*
                * Copy on Finish
-               * Saloon forge is run on a api web app that contains the routes that need to be generated.
-               * However the wrapper is a seperte project.  So copy the files at the end of
+               * Saloon forge is run on an api web app that contains the routes that need to be generated.
+               * However the wrapper is a seperate project.  So copy the files at the end of
                * generation to another directory.  You may need to edit Connector.
                */
               'copy' => [
