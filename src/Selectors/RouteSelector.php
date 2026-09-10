@@ -67,7 +67,7 @@
           // Should we exclude route based on the url containing a filter that
           // shoudl be excluded
           foreach($this->config('routes.exclude.filter') as $filter){
-              echo "\n filter: $filter  " . $route->uri() . " \n";
+             // echo "\n filter: $filter  " . $route->uri() . " \n";
               if (Str::is( $filter,$route->uri(),ignoreCase: true)) {
                   Log::debug('excluding Route via filter ' . $route->uri() );
                   return null;
@@ -76,7 +76,7 @@
 
 
           // Exclude via url middleware web | api  etc
-          $excludeMiddleware = $this->config('routes.exclude.middleware','');
+          $excludeMiddleware = $this->config('routes.exclude.middleware');
           if (count($excludeMiddleware) > 0) {
               //  echo $route->uri() . "\n";
               $middlewares = $route->middleware();
@@ -84,7 +84,7 @@
               $matches = collect($middlewares)->contains(function ($m) use ($excludeMiddleware) {
 
                   if (strtolower($m) === strtolower($excludeMiddleware[0])) {
-                 // echo "\n-------------- do not return --------------------\n";
+                 // echo "\n-------------- do not return --------------------\n" . json_encode($excludeMiddleware,JSON_PRETTY_PRINT);
                       return true;
                   }
                   return false;
@@ -92,17 +92,18 @@
               });
               //  dd($matches);
               if ($matches ) {
-                  echo "\n REturn null";
+                 // echo "\n REturn null";
                   Log::debug('excluding Route no middle matches ' . $route->uri() );
                   return null;
               }
+
 
 
            }
 
           // Should we exclude route based on only certain filters should be included
           foreach($this->config('routes.include.filter') as $filter){
-              echo "\n include filter: $filter  " . $route->uri() . " \n";
+            //  echo "\n include filter: $filter  " . $route->uri() . " \n";
               if (Str::is( $filter,$route->uri(),ignoreCase: true) === false  ) {
 Log::debug('excluding Route include filter ' . $route->uri() );
                   return null;
