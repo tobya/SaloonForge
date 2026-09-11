@@ -10,8 +10,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
+use Tobya\SaloonForge\Services\ConfigService;
 use Tobya\SaloonForge\Generators\RequestGenerator;
-
+use Illuminate\Filesystem\Filesystem;
 
 class SaloonForgeCommand extends Command
 {
@@ -27,11 +28,15 @@ class SaloonForgeCommand extends Command
     protected string|array|bool|int|null|float
                 $integration;
 
+    protected ConfigService $configService;
+
+
     public function handle(): int
     {
 
         $integration = $this->argument('integration');
         $this->integration = $integration;
+        $this->configService = new ConfigService($integration);
 
         if (ctype_lower(substr($integration, 0, 1)))
         {
@@ -41,11 +46,11 @@ class SaloonForgeCommand extends Command
 
 
 
-        $config_path = 'saloonforge.integrations.' . $integration ;
-        $this->config_path = $config_path;
+       // $config_path = 'saloonforge.integrations.' . $integration ;
+     //   $this->config_path = $config_path;
 
 
-        $RouteSelectorClass = $this->config('routes.selector_class');
+        $RouteSelectorClass = $this->configService->Config('routes.selector_class');
 
         $routeselector = new $RouteSelectorClass($integration);
 
@@ -83,7 +88,7 @@ class SaloonForgeCommand extends Command
             }
 
 
-            $namespace = config($config_path . '.namespace');
+            $namespace =  $this->configService->get('namespace'); // config($config_path . '.namespace');
             $namespace_withRequest = Str($namespace )->finish('\\')     . 'Requests' ;
 
             $forgeRequestParameters = ['integration' => STR($integration)->title()->toString(),
@@ -127,9 +132,12 @@ class SaloonForgeCommand extends Command
 
     private function CopyOnFinish()
     {
-        $shouldCopy = config($this->config_path . '.output.copy.active');
+        $shouldCopy = $this->configService->config( 'output.copy.active');
+
         if ($shouldCopy) {
-            $destination = config($this->config_path . '.output.copy.destination');
+            $destination = $this->configService->config( 'output.copy.destination');
+        } else {
+            return;
         }
 
         $fileStore = Storage::build(  [
@@ -163,16 +171,4 @@ class SaloonForgeCommand extends Command
 
     }
 
-      protected function config(string $string) : mixed
-      {
-           $config_path = 'saloonforge.integrations.' . $this->integration ;
-          $integration_config_value = config($config_path . '.' . $string,self::EmptyConfigValue);
-
-          if ($integration_config_value == self::EmptyConfigValue) {
-              $config_path = 'saloonforge.integrations.Default' ;
-              $integration_config_value = config($config_path . '.' . $string);
-          }
-
-          return $integration_config_value;
-      }
 }
