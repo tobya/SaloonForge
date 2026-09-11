@@ -7,8 +7,9 @@ return [
 
         /**
          * Integration
-         * This is the default integration, you can make more.  This must match (case sensitive)
-         * from the commandline the integration you wish to run.
+         * This is the default integration, you can make more.  The name must match (case-sensitive)
+         * the integration you wish to build, when running the command on the command line.
+         * Default will be used if values are not specified.
          */
 
       'Default' => [
@@ -44,10 +45,7 @@ return [
             'include' => [
                 'middleware' => ['web'],
                 'filter' =>        [],
-                'route-parameters' => [
-                    'any' =>    [],
-                    'all' => [],  // not implemented
-                ],
+
             ]
 
         ],

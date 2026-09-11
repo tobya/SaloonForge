@@ -24,6 +24,7 @@ class ForgeRequestCommand extends MakeRequest
      */
     protected $name = 'saloon:forgerequest';
 
+       const string EmptyConfigValue = 'THIS IS A MISSING VALUE';
     /**
      * The console command description.
      *
@@ -164,9 +165,8 @@ class ForgeRequestCommand extends MakeRequest
     protected function getStub()
     {
         if ( $this->isComposerTest()){
-
+            // look for stub in package source.
           $sp =  $this->resolveStubPath( '/../../../../../../stubs/' . $this->resolveStubName());
-       //  dd($sp);
           return $sp;
         }
         // for some reason this is based on the saloon/laravel-saloon path.

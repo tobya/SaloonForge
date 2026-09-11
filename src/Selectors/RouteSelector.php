@@ -51,13 +51,20 @@
           return \Illuminate\Support\Facades\Route::getRoutes();
       }
 
-      protected function filterRoute( ForgeRoute $forgeRoute)
+      /**
+       * Checks if route matches filters.  Returns route if it does
+       * otherewise null.
+       * @param ForgeRoute $forgeRoute
+       * @return ForgeRoute|null
+       * @throws \Exception
+       */
+      protected function filterRoute( ForgeRoute $forgeRoute) : ForgeRoute | null
       {
           // retireve the actual route
           $route = $forgeRoute->route;
 
           // should we exclude routes that do not have a name() associated
-          if ($this->config('routes.exclude.unnamed', false)) {
+          if ($this->config('routes.exclude.unnamed')) {
               if ($route->getName() == null) {
                   Log::debug('excluding Route no name ' . $route->uri() );
                   return null;
@@ -110,7 +117,7 @@
           foreach($this->config('routes.include.filter') as $filter){
             //  echo "\n include filter: $filter  " . $route->uri() . " \n";
               if (Str::is( $filter,$route->uri(),ignoreCase: true) === false  ) {
-Log::debug('excluding Route include filter ' . $route->uri() );
+                    Log::debug('excluding Route include filter ' . $route->uri() );
                   return null;
               }
           }

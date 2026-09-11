@@ -16,13 +16,16 @@ use Tobya\SaloonForge\Generators\RequestGenerator;
 class SaloonForgeCommand extends Command
 {
     public $signature = 'saloon:forge {integration : The name of the Integration}';
-
+   const string EmptyConfigValue = 'THIS IS A MISSING VALUE';
     public $description = 'Forge a Saloon Api from Routes ';
     protected string $config_path;
+
+
     /**
      * @var array|array[]|bool|bool[]|float|float[]|int|int[]|null[]|string|string[]|null
      */
-    protected string|array|bool|int|null|float $integration;
+    protected string|array|bool|int|null|float
+                $integration;
 
     public function handle(): int
     {
@@ -42,7 +45,7 @@ class SaloonForgeCommand extends Command
         $this->config_path = $config_path;
 
 
-        $RouteSelectorClass = config( $config_path . '.routes.selector_class');
+        $RouteSelectorClass = $this->config('routes.selector_class');
 
         $routeselector = new $RouteSelectorClass($integration);
 
@@ -155,8 +158,21 @@ class SaloonForgeCommand extends Command
                     $file,
                     $fileStore->get($file)
                 );
-          
+
         }
 
     }
+
+      protected function config(string $string) : mixed
+      {
+           $config_path = 'saloonforge.integrations.' . $this->integration ;
+          $integration_config_value = config($config_path . '.' . $string,self::EmptyConfigValue);
+
+          if ($integration_config_value == self::EmptyConfigValue) {
+              $config_path = 'saloonforge.integrations.Default' ;
+              $integration_config_value = config($config_path . '.' . $string);
+          }
+
+          return $integration_config_value;
+      }
 }
