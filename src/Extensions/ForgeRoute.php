@@ -7,7 +7,9 @@
   class ForgeRoute
   {
         public string $group;
-        public function __construct( public Route $route  )
+        public function __construct(
+            public Route $route
+        )
         {
         }
 

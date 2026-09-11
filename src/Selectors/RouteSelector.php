@@ -78,6 +78,11 @@
           // Exclude via url middleware web | api  etc
           $excludeMiddleware = $this->config('routes.exclude.middleware');
           if (count($excludeMiddleware) > 0) {
+
+              if (count($excludeMiddleware) > 1){
+                  throw new \Exception('Middleware can only have a single value currently.');
+              }
+
               //  echo $route->uri() . "\n";
               $middlewares = $route->middleware();
              // print_r($middlewares);
