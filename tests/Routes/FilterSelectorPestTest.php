@@ -80,6 +80,45 @@ it ('will exclude filtered routes at beginning',function() {
 });
 
 
+
+it ('will exclude multiple filtered routes',function() {
+
+
+        $uniqueRoute = uniqid();
+
+        Route::get("/$uniqueRoute/123",[\Tobya\SaloonForge\Tests\TestController::class,'test'])->name('test123');
+        Route::get("/$uniqueRoute/abc/{any}",[\Tobya\SaloonForge\Tests\TestController::class,'test'])->name('testabc');
+        Route::get('/house/123/def',[\Tobya\SaloonForge\Tests\TestController::class,'test'])->name('testdef');
+        Route::get('/car/acc123',[\Tobya\SaloonForge\Tests\TestController::class,'test'])->name('test123acc');
+        Route::get('/jam/123/3322',[\Tobya\SaloonForge\Tests\TestController::class,'test'])->name('test123223');
+        // should not be excluuded
+        Route::get("/tart/$uniqueRoute",[\Tobya\SaloonForge\Tests\TestController::class,'test'])->name('test123bbb');
+        // 8 to here
+
+        Route::get("/$uniqueRoute/noname",[\Tobya\SaloonForge\Tests\TestController::class,'test']);
+        // 9 but should nto be returned.
+
+
+     Config::set("saloonforge.integrations.Default.routes.exclude.filter" ,["$uniqueRoute/*", "jam*"]);
+
+
+    $rs = new \Tobya\SaloonForge\Selectors\RouteSelector('Default');
+
+      $routes =  $rs->Routes();
+      $allRoutes = Route::getRoutes();
+
+
+
+    expect( $routes   )->toBeObject();
+
+    expect($routes->count())->toBeGreaterThan(0);
+    // 4 should be missing
+    expect($routes->count())->toEqual($allRoutes->count() -4);
+
+
+});
+
+
 it ('will exclude filtered routes and ',function($filter,$excludedCount) {
 
 
