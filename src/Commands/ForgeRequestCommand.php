@@ -26,7 +26,7 @@ class ForgeRequestCommand extends MakeRequest
      */
     protected $name = 'saloon:forgerequest';
 
-       const string EmptyConfigValue = 'THIS IS A MISSING VALUE';
+
     /**
      * The console command description.
      *

@@ -17,7 +17,7 @@ use Illuminate\Filesystem\Filesystem;
 class SaloonForgeCommand extends Command
 {
     public $signature = 'saloon:forge {integration : The name of the Integration}';
-   const string EmptyConfigValue = 'THIS IS A MISSING VALUE';
+
     public $description = 'Forge a Saloon Api from Routes ';
     protected string $config_path;
 
