@@ -97,19 +97,18 @@
               //  echo $route->uri() . "\n";
               $middlewares = $route->middleware();
              // print_r($middlewares);
-              $matches = collect($middlewares)->contains(function ($m) use ($excludeMiddleware) {
+              $matches = collect($middlewares)->contains(function ($m) use ($excludeMiddleware, $route) {
 
                   if (strtolower($m) === strtolower($excludeMiddleware[0])) {
-                 // echo "\n-------------- do not return --------------------\n" . json_encode($excludeMiddleware,JSON_PRETTY_PRINT);
                       return true;
                   }
                   return false;
 
               });
-              //  dd($matches);
+
               if ($matches ) {
-                 // echo "\n REturn null";
-                  Log::debug('excluding Route no middle matches ' . $route->uri() );
+
+                  Log::debug('excluding Route via middleware ' . $route->uri(),[$matches] );
                   return null;
               }
 
@@ -119,9 +118,9 @@
 
           // Should we exclude route based on only certain filters should be included
           foreach($this->configService->config('routes.include.filter') as $filter){
-            //  echo "\n include filter: $filter  " . $route->uri() . " \n";
+
               if (Str::is( $filter,$route->uri(),ignoreCase: true) === false  ) {
-                    Log::debug('excluding Route include filter ' . $route->uri() );
+                  Log::debug('excluding Route via include filter ' . $route->uri() );
                   return null;
               }
           }

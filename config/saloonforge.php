@@ -5,12 +5,16 @@ return [
 
     'integrations' => [
 
-        /**
-         * Integration
-         * This is the default integration, you can make more.  The name must match (case-sensitive)
-         * the integration you wish to build, when running the command on the command line.
-         * Default will be used if values are not specified.
-         */
+        /*
+         |--------------------------------------------------------------------------------
+         | Default Integration
+         |--------------------------------------------------------------------------------
+         |
+         | This is the default integration, you can make more.  The name must match (case-sensitive)
+         | the integration you wish to build, when running the command on the command line.
+         | Default will be used if values are not specified.
+         |
+        */
 
       'Default' => [
 
@@ -49,7 +53,7 @@ return [
             ]
 
         ],
-         'namespace' => 'App\Http\Integrations\{integration}',
+         'namespace' => 'App\Http\Integrations\{set-this-subdirectory}',
 
           /*
            * Output Settings

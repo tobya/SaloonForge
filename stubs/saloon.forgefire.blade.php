@@ -44,6 +44,20 @@ class {{$integration}}Api extends \Tobya\Saloon\SaloonFire
             return $this->connector->send($request);
       }
 
+
+      Protected function getRequest_or_SendForResult($request )
+      {
+            // apply any modifiers
+            $request = $this->applymodifiers($request);
+
+            // if getRequest() has been called, don't actually send request to server,
+            // just return the request to caller.
+            if ($this->shouldReturnRequest){
+                return $request;
+            }
+
+            return $this->send($request);
+      }
     @foreach ($requests as $request)
         {{-- this is correct indentation --}}
     /**
@@ -55,21 +69,13 @@ class {{$integration}}Api extends \Tobya\Saloon\SaloonFire
 
             $request = new {{$request->name}}({{$request->parameterlist()}});
 
-            // apply any modifiers
-            $request = $this->applymodifiers($request);
-
-            // if getRequest() has been called, don't actually send request to server,
-            // just return the request to caller.
-            if ($this->shouldReturnRequest){
-                return $request;
-            }
-
-            return $this->send($request);
+            return $this->getRequest_or_SendForResult($request);
 
         }
 
 
     @endforeach
+
 
 
 
