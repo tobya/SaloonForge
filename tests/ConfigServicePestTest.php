@@ -27,3 +27,15 @@
         expect($configValue)->toEqual(['notWeb2']);
 
     });
+
+    it('can see invalid value from the config file', function () {
+
+        $configService = new ConfigService('Photo');
+        $configValue = $configService->Config('routes.include.xxxaaabbb');
+
+
+
+        expect($configValue)->not()->toBeArray();
+        expect($configValue)->toBeNull();
+
+    });
