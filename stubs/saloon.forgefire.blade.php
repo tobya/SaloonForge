@@ -14,10 +14,7 @@ namespace {{$namespace}};
  use Saloon\Http\Response;
  use Saloon\Http\Request;
 
-// Client library must composer require tobya/saloon
- // use Tobya\Saloon\SaloonFire;
-
-class {{$integration}}Api extends \Tobya\Saloon\SaloonFire
+class {{$integration}}Api
 {
 
       protected {{$integration}}Connector $connector;
@@ -27,15 +24,17 @@ class {{$integration}}Api extends \Tobya\Saloon\SaloonFire
 
       private $shouldReturnRequest = false;
 
+      protected $disableCaching = false;
+
       public function __construct(  )
       {
             $this->connector = new {{$integration}}Connector();
       }
 
 
-      public function getRequest() : static
+      public function getRequest($toggle = true) : static
       {
-          $this->shouldReturnRequest = true;
+          $this->shouldReturnRequest = $toggle;
           return $this;
       }
 
@@ -78,6 +77,30 @@ class {{$integration}}Api extends \Tobya\Saloon\SaloonFire
 
 
 
+
+        public function disableCaching($disableCaching = true) : static
+        {
+            $this->disableCaching = $disableCaching;
+            return $this;
+        }
+
+
+
+      /**
+       * Process any modification to Request.
+       * @param Request $request
+       * @return Response
+       */
+        protected function applymodifiers(Request $request) : Request
+        {
+            if ($this->disableCaching){
+                if(method_exists($request,'disableCaching'))
+                {
+                  $request->disableCaching();
+                }
+            }
+            return $request;
+        }
 
 
 
