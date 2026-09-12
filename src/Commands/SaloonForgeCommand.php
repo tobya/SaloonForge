@@ -10,79 +10,90 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
+use Tobya\SaloonForge\Services\ConfigService;
+use Symfony\Component\Console\Input\InputOption;
 use Tobya\SaloonForge\Generators\RequestGenerator;
-
+use Illuminate\Filesystem\Filesystem;
 
 class SaloonForgeCommand extends Command
 {
-    public $signature = 'saloon:forge {integration : The name of the Integration}';
+    public $signature = 'saloon:forge {integration : The name of the Integration} {--no-copy}';
 
     public $description = 'Forge a Saloon Api from Routes ';
     protected string $config_path;
+
+
     /**
      * @var array|array[]|bool|bool[]|float|float[]|int|int[]|null[]|string|string[]|null
      */
-    protected string|array|bool|int|null|float $integration;
+    protected string|array|bool|int|null|float
+                $integration;
+
+    protected ConfigService $configService;
+
+
+
 
     public function handle(): int
     {
 
+        // Setup
         $integration = $this->argument('integration');
         $this->integration = $integration;
+        $this->configService = new ConfigService($integration);
 
+        // Check for errors in integration naming and availability
         if (ctype_lower(substr($integration, 0, 1)))
         {
             $this->error('Integration must start with an uppercase letter');
             return self::FAILURE;
         }
 
+        if ( ! $this->configService->IntegrationExists()){
+            $this->error('Integration does not exist in config file, please check your spelling or modify config file');
+            return self::FAILURE;
+        }
 
 
-        $config_path = 'saloonforge.integrations.' . $integration ;
-        $this->config_path = $config_path;
-
-
-        $RouteSelectorClass = config( $config_path . '.routes.selector_class');
-
+        // Create the route Selector.
+        $RouteSelectorClass = $this->configService->Config('routes.selector_class');
         $routeselector = new $RouteSelectorClass($integration);
 
 
         // get all routes
-        $rz = $routeselector->Routes();
-      //  Log::debug('rout select ', [$routeselector]);
-      //  ray($rz);asdfasdf
+        $filteredRoutes = $routeselector->Routes();
 
-
-     //   Log::debug('rz',[$rz]);
-      //  die();
         $requests = [];
 
-        foreach ($rz as $forgeRoute) {
+        foreach ($filteredRoutes as $forgeRoute) {
 
             $route = $forgeRoute->route;
-           echo $route->uri();
-          //  echo $route->prefix() . "\n";
-            $params = collect($route->parameterNames());
-            $json_params = json_encode($params);
-
-            if ($route->getName() != null) {
-                $name = str($route->getName())->replace(['.', '-', ' '], ['', '', '']);
-                $this->info(' not name:' . $name);
-            } else {
-                $name = str($route->uri())->title()
-                            ->replace(  ['.', '-', ' ','/','\\','{','}','?'],
-                                        ['', '','', '','', '','', '',]) ;
-                $this->info(' name:' . $name);
-            }
 
             if ($route->uri() == '/') {
                 continue;
             }
 
+            $params = collect($route->parameterNames());
+            $json_params = json_encode($params);
 
-            $namespace = config($config_path . '.namespace');
+            /**
+             * Generate Class name from route name or Route URI
+             */
+            if ($route->getName() != null) {
+                $name = str($route->getName())->replace(['.', '-', ' '], ['', '', '']);
+            } else {
+                $name = str($route->uri())->title()
+                            ->replace(  ['.', '-', ' ','/','\\','{','}','?'],
+                                        ['', '','', '','', '','', '',]) ;
+            }
+
+
+
+
+            $namespace =  $this->configService->get('namespace');
             $namespace_withRequest = Str($namespace )->finish('\\')     . 'Requests' ;
 
+            // Create a Saloon requeset via the Saloon:ForgeRequest Command.
             $forgeRequestParameters = ['integration' => STR($integration)->title()->toString(),
                 'name' => $name->toString(),
                 '--method' => $route->methods()[0],
@@ -95,6 +106,7 @@ class SaloonForgeCommand extends Command
             $this->info('Creating Forge Request for ' .  $route->uri() ) ;
             Artisan::call('saloon:forgerequest', $forgeRequestParameters);
 
+            // Store details of request for SaloonForge Fire Creation.
             $requests[] = new RequestGenerator($name, $route,$params );
 
         }
@@ -111,12 +123,11 @@ class SaloonForgeCommand extends Command
                                             'namespace' => $namespace,
                                             'namespace_withrequest' => $namespace_withRequest,
                                         ]);
-       // echo str(config('saloon.integrations_path'))->finish('/')  . $integration . 'Api.php';
 
         // Create the fireapi.php file .
         file_put_contents( str(config('saloon.integrations_path'))->finish('/')  . $integration . '/' . $integration . 'Api.php'  , $newfire);
 
-        // if required copy to the sepcifeid destination
+        // if required copy to the specified destination
         $this->CopyOnFinish();
 
         return 0;
@@ -124,9 +135,21 @@ class SaloonForgeCommand extends Command
 
     private function CopyOnFinish()
     {
-        $shouldCopy = config($this->config_path . '.output.copy.active');
+        /*
+         * @var bool $shouldCopy;
+         */
+        $shouldCopy = (bool) ($this->configService->config( 'output.copy.active'))
+                        && ! $this->Option('no-copy') ;
+
+
+
+       // print_r([$this->option('copy'), $shouldCopy, $this->configService->config( 'output.copy.active')]);
+       // var_dump($this->option('no-copy'), $shouldCopy, $this->configService->config( 'output.copy.active'));
+
         if ($shouldCopy) {
-            $destination = config($this->config_path . '.output.copy.destination');
+            $destination = $this->configService->config( 'output.copy.destination');
+        } else {
+            return;
         }
 
         $fileStore = Storage::build(  [
@@ -145,18 +168,28 @@ class SaloonForgeCommand extends Command
         // List all the files from a folder
         $files = $fileStore->allFiles('/');
 
-        $this->info('Copying files for ' .  $this->integration . ' to ' .  $destination);
+        $this->info('Copying files for ' .  $this->integration . " to \n\t" .  $destination . ' ');
 
         // Using normal get and put (the whole file string at once)
         foreach($files as $file) {
 
-            $this->info($file );
+            $pathinfo = pathinfo($file);
+            $filename = $pathinfo['basename'];
+            $exceptFiles = collect($this->configService->Config('output.copy.except.files'));
+
+            if($exceptFiles->contains($filename)) {
+                $this->line("Skipping $filename");
+                continue;
+            }
+
+            $this->info('Copy ' . $file );
             $destinationStore->put(
-                    $file,
-                    $fileStore->get($file)
-                );
+                                    $file,
+                                    $fileStore->get($file)
+                                );
 
         }
 
     }
+
 }

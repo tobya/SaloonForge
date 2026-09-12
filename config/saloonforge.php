@@ -7,8 +7,9 @@ return [
 
         /**
          * Integration
-         * This is the default integration, you can make more.  This must match (case sensitive)
-         * from the commandline the integration you wish to run.
+         * This is the default integration, you can make more.  The name must match (case-sensitive)
+         * the integration you wish to build, when running the command on the command line.
+         * Default will be used if values are not specified.
          */
 
       'Default' => [
@@ -22,7 +23,8 @@ return [
             'selector_class' => \Tobya\SaloonForge\Selectors\RouteSelector::class,
             'forgeroute_class' => \Tobya\SaloonForge\Extensions\ForgeRoute::class,
 
-            'prefix' => ['/'],
+
+
             'exclude' =>
                 [
                     /**
@@ -42,10 +44,8 @@ return [
                 ],
             'include' => [
                 'middleware' => ['web'],
-                'route-parameters' => [
-                    'any' =>    [],
-                    'all' => [],  // not implemented
-                ],
+                'filter' =>        [],
+
             ]
 
         ],
@@ -60,14 +60,25 @@ return [
 
               /*
                * Copy on Finish
-               * Saloon forge is run on a api web app that contains the routes that need to be generated.
-               * However the wrapper is a seperte project.  So copy the files at the end of
+               * Saloon forge is run on an api web app that contains the routes that need to be generated.
+               * However the wrapper is a seperate project.  So copy the files at the end of
                * generation to another directory.  You may need to edit Connector.
                */
               'copy' => [
                   'active' => false,
                   'destination' => '',
-              ]
+
+                  // these files should not be copied, this can be helpful when the file has substantial
+                  // changes from the generated file and thus avoids git diff discarding.
+                  'except' =>
+                      [
+                      'files' => [
+
+                      ]
+                  ]
+              ] ,
+
+
           ]
 
 
