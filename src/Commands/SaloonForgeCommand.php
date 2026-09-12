@@ -37,10 +37,12 @@ class SaloonForgeCommand extends Command
     public function handle(): int
     {
 
+        // Setup
         $integration = $this->argument('integration');
         $this->integration = $integration;
         $this->configService = new ConfigService($integration);
 
+        // Check for errors in integration naming and availability
         if (ctype_lower(substr($integration, 0, 1)))
         {
             $this->error('Integration must start with an uppercase letter');
@@ -53,47 +55,45 @@ class SaloonForgeCommand extends Command
         }
 
 
+        // Create the route Selector.
         $RouteSelectorClass = $this->configService->Config('routes.selector_class');
-
         $routeselector = new $RouteSelectorClass($integration);
 
 
         // get all routes
-        $rz = $routeselector->Routes();
-      //  Log::debug('rout select ', [$routeselector]);
-      //  ray($rz);asdfasdf
+        $filteredRoutes = $routeselector->Routes();
 
-
-     //   Log::debug('rz',[$rz]);
-      //  die();
         $requests = [];
 
-        foreach ($rz as $forgeRoute) {
+        foreach ($filteredRoutes as $forgeRoute) {
 
             $route = $forgeRoute->route;
-          // echo $route->uri();
-          //  echo $route->prefix() . "\n";
-            $params = collect($route->parameterNames());
-            $json_params = json_encode($params);
-
-            if ($route->getName() != null) {
-                $name = str($route->getName())->replace(['.', '-', ' '], ['', '', '']);
-                //$this->info(' not name:' . $name);
-            } else {
-                $name = str($route->uri())->title()
-                            ->replace(  ['.', '-', ' ','/','\\','{','}','?'],
-                                        ['', '','', '','', '','', '',]) ;
-                //$this->info(' name:' . $name);
-            }
 
             if ($route->uri() == '/') {
                 continue;
             }
 
+            $params = collect($route->parameterNames());
+            $json_params = json_encode($params);
 
-            $namespace =  $this->configService->get('namespace'); // config($config_path . '.namespace');
+            /**
+             * Generate Class name from route name or Route URI
+             */
+            if ($route->getName() != null) {
+                $name = str($route->getName())->replace(['.', '-', ' '], ['', '', '']);
+            } else {
+                $name = str($route->uri())->title()
+                            ->replace(  ['.', '-', ' ','/','\\','{','}','?'],
+                                        ['', '','', '','', '','', '',]) ;
+            }
+
+
+
+
+            $namespace =  $this->configService->get('namespace');
             $namespace_withRequest = Str($namespace )->finish('\\')     . 'Requests' ;
 
+            // Create a Saloon requeset via the Saloon:ForgeRequest Command.
             $forgeRequestParameters = ['integration' => STR($integration)->title()->toString(),
                 'name' => $name->toString(),
                 '--method' => $route->methods()[0],
@@ -106,6 +106,7 @@ class SaloonForgeCommand extends Command
             $this->info('Creating Forge Request for ' .  $route->uri() ) ;
             Artisan::call('saloon:forgerequest', $forgeRequestParameters);
 
+            // Store details of request for SaloonForge Fire Creation.
             $requests[] = new RequestGenerator($name, $route,$params );
 
         }
@@ -122,12 +123,11 @@ class SaloonForgeCommand extends Command
                                             'namespace' => $namespace,
                                             'namespace_withrequest' => $namespace_withRequest,
                                         ]);
-       // echo str(config('saloon.integrations_path'))->finish('/')  . $integration . 'Api.php';
 
         // Create the fireapi.php file .
         file_put_contents( str(config('saloon.integrations_path'))->finish('/')  . $integration . '/' . $integration . 'Api.php'  , $newfire);
 
-        // if required copy to the sepcifeid destination
+        // if required copy to the specified destination
         $this->CopyOnFinish();
 
         return 0;
