@@ -31,6 +31,8 @@ class SaloonForgeCommand extends Command
     protected ConfigService $configService;
 
 
+
+
     public function handle(): int
     {
 
@@ -44,10 +46,10 @@ class SaloonForgeCommand extends Command
             return self::FAILURE;
         }
 
-
-
-       // $config_path = 'saloonforge.integrations.' . $integration ;
-     //   $this->config_path = $config_path;
+        if ( ! $this->configService->IntegrationExists()){
+            $this->error('Integration does not exist in config file, please check your spelling or modify config file');
+            return self::FAILURE;
+        }
 
 
         $RouteSelectorClass = $this->configService->Config('routes.selector_class');

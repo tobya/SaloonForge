@@ -67,7 +67,18 @@ return [
               'copy' => [
                   'active' => false,
                   'destination' => '',
-              ]
+
+                  // these files should not be copied, this can be helpful when the file has substantial
+                  // changes from the generated file and thus avoids git diff discarding.
+                  'except' =>
+                      [
+                      'files' => [
+
+                      ]
+                  ]
+              ] ,
+
+
           ]
 
 

@@ -14,6 +14,11 @@
       {
       }
 
+      private function configPath(): string
+      {
+           return 'saloonforge.integrations.' . $this->integration ;
+      }
+
       /**
        * Retrieve a config value from the correct integration
        * in the saloonforge.php config file.
