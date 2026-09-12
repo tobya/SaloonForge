@@ -28,16 +28,22 @@
       public function Config(string $string) : mixed
       {
 
-          $config_path = 'saloonforge.integrations.' . $this->integration ;
+          $config_path = $this->configPath();
           $integration_config_value = config($config_path . '.' . $string,self::EmptyConfigValue);
-      
+
           // Value does not exist, pull it from the default.
           if ($integration_config_value === self::EmptyConfigValue) {
               $config_path = 'saloonforge.integrations.Default' ;
               $integration_config_value = config($config_path . '.' . $string);
           }
-       
+
           return $integration_config_value;
+      }
+
+      public function IntegrationExists() : bool
+      {
+          $config_integration_array = config($this->configPath());
+          return is_array($config_integration_array);
       }
 
       public function get($string) : mixed

@@ -11,12 +11,13 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use Tobya\SaloonForge\Services\ConfigService;
+use Symfony\Component\Console\Input\InputOption;
 use Tobya\SaloonForge\Generators\RequestGenerator;
 use Illuminate\Filesystem\Filesystem;
 
 class SaloonForgeCommand extends Command
 {
-    public $signature = 'saloon:forge {integration : The name of the Integration}';
+    public $signature = 'saloon:forge {integration : The name of the Integration} {--no-copy}';
 
     public $description = 'Forge a Saloon Api from Routes ';
     protected string $config_path;
@@ -70,19 +71,19 @@ class SaloonForgeCommand extends Command
         foreach ($rz as $forgeRoute) {
 
             $route = $forgeRoute->route;
-           echo $route->uri();
+          // echo $route->uri();
           //  echo $route->prefix() . "\n";
             $params = collect($route->parameterNames());
             $json_params = json_encode($params);
 
             if ($route->getName() != null) {
                 $name = str($route->getName())->replace(['.', '-', ' '], ['', '', '']);
-                $this->info(' not name:' . $name);
+                //$this->info(' not name:' . $name);
             } else {
                 $name = str($route->uri())->title()
                             ->replace(  ['.', '-', ' ','/','\\','{','}','?'],
                                         ['', '','', '','', '','', '',]) ;
-                $this->info(' name:' . $name);
+                //$this->info(' name:' . $name);
             }
 
             if ($route->uri() == '/') {
@@ -134,7 +135,16 @@ class SaloonForgeCommand extends Command
 
     private function CopyOnFinish()
     {
-        $shouldCopy = $this->configService->config( 'output.copy.active');
+        /*
+         * @var bool $shouldCopy;
+         */
+        $shouldCopy = (bool) ($this->configService->config( 'output.copy.active'))
+                        && ! $this->Option('no-copy') ;
+
+
+
+       // print_r([$this->option('copy'), $shouldCopy, $this->configService->config( 'output.copy.active')]);
+       // var_dump($this->option('no-copy'), $shouldCopy, $this->configService->config( 'output.copy.active'));
 
         if ($shouldCopy) {
             $destination = $this->configService->config( 'output.copy.destination');
@@ -158,16 +168,25 @@ class SaloonForgeCommand extends Command
         // List all the files from a folder
         $files = $fileStore->allFiles('/');
 
-        $this->info('Copying files for ' .  $this->integration . ' to ' .  $destination);
+        $this->info('Copying files for ' .  $this->integration . " to \n\t" .  $destination . ' ');
 
         // Using normal get and put (the whole file string at once)
         foreach($files as $file) {
 
-            $this->info($file );
+            $pathinfo = pathinfo($file);
+            $filename = $pathinfo['basename'];
+            $exceptFiles = collect($this->configService->Config('output.copy.except.files'));
+
+            if($exceptFiles->contains($filename)) {
+                $this->line("Skipping $filename");
+                continue;
+            }
+
+            $this->info('Copy ' . $file );
             $destinationStore->put(
-                    $file,
-                    $fileStore->get($file)
-                );
+                                    $file,
+                                    $fileStore->get($file)
+                                );
 
         }
 
