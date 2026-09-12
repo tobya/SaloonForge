@@ -6,6 +6,7 @@
   {
 
       const string EmptyConfigValue = 'THIS IS A MISSING VALUE';
+
       public function __construct(
 
           public string $integration
@@ -40,15 +41,25 @@
           return $integration_config_value;
       }
 
+      /**
+       * Alias for config()
+       * @param $string
+       * @return mixed
+       */
+      public function get($string) : mixed
+      {
+          return $this->Config($string);
+      }
+
+      /**
+       * Does a section exist in the config file for the integration.
+       * @return bool
+       */
       public function IntegrationExists() : bool
       {
           $config_integration_array = config($this->configPath());
           return is_array($config_integration_array);
       }
 
-      public function get($string) : mixed
-      {
-          return $this->Config($string);
-      }
 
   }
