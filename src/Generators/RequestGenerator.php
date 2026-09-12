@@ -9,7 +9,7 @@
   class RequestGenerator
   {
 
-      public function __construct(    public string $name, public Route $route, public $params  )
+      public function __construct(    public string $name, public Route | null  $route, public $params  )
       {
 
       }
