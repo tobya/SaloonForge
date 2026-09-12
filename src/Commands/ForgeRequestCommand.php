@@ -7,6 +7,8 @@ namespace Tobya\SaloonForge\Commands;
 use Saloon\Enums\Method;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
+use Illuminate\Filesystem\Filesystem;
+use Tobya\SaloonForge\Services\ConfigService;
 use Saloon\Laravel\Console\Commands\MakeRequest;
 use Tobya\SaloonForge\SaloonForgeServiceProvider;
 use function Laravel\Prompts\select;
@@ -24,7 +26,7 @@ class ForgeRequestCommand extends MakeRequest
      */
     protected $name = 'saloon:forgerequest';
 
-       const string EmptyConfigValue = 'THIS IS A MISSING VALUE';
+
     /**
      * The console command description.
      *
@@ -52,6 +54,7 @@ class ForgeRequestCommand extends MakeRequest
      * @var string
      */
     protected $stub = 'saloon.forgerequest.stub';
+
 
     /**
      * Get the options for making a request
@@ -111,8 +114,6 @@ class ForgeRequestCommand extends MakeRequest
 
     protected function replaceIntegration($namespace_string): string
     {
-     //   ray('{integration}', $this->getIntegration(), $namespace_string);
-       // ray(str_replace('{integration}', $this->getIntegration(), $namespace_string));
          return str_replace('{integration}', $this->getIntegration(), $namespace_string);
     }
 
@@ -162,6 +163,12 @@ class ForgeRequestCommand extends MakeRequest
         return str_replace('{{ namespace }}', $providednamespace, $stub);
     }
 
+    /**
+     * This is called by the main Saloon:Request command and resolves a sub path from
+     * saloon/laravel-saloon.  When testing, the path needs to point to the actual
+     * package source instead to work.
+     * @return string
+     */
     protected function getStub()
     {
         if ( $this->isComposerTest()){

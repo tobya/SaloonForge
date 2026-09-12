@@ -7,6 +7,7 @@
   use Illuminate\Support\Facades\Log;
   use Illuminate\Routing\RouteCollection;
   use Tobya\SaloonForge\Extensions\ForgeRoute;
+  use Tobya\SaloonForge\Services\ConfigService;
 
   class RouteSelector
   {
@@ -16,12 +17,15 @@
 
       public  $routes = [];
 
-      const string EmptyConfigValue = 'THIS IS A MISSING VALUE';
+      protected ConfigService $configService;
+
+
 
       public function __construct(string $integration)
       {
           $this->integration = $integration;
-          $this->forgeRouteClass =   config("saloonforge.integrations.$integration.routes.forgeroute_class");
+          $this->configService = new ConfigService($integration);
+          $this->forgeRouteClass =   $this->configService->config("routes.forgeroute_class");
 
       }
 
@@ -64,7 +68,7 @@
           $route = $forgeRoute->route;
 
           // should we exclude routes that do not have a name() associated
-          if ($this->config('routes.exclude.unnamed')) {
+          if ($this->configService->config('routes.exclude.unnamed')) {
               if ($route->getName() == null) {
                   Log::debug('excluding Route no name ' . $route->uri() );
                   return null;
@@ -73,7 +77,7 @@
 
           // Should we exclude route based on the url containing a filter that
           // shoudl be excluded
-          foreach($this->config('routes.exclude.filter') as $filter){
+          foreach($this->configService->config('routes.exclude.filter') as $filter){
              // echo "\n filter: $filter  " . $route->uri() . " \n";
               if (Str::is( $filter,$route->uri(),ignoreCase: true)) {
                   Log::debug('excluding Route via filter ' . $route->uri() );
@@ -83,7 +87,7 @@
 
 
           // Exclude via url middleware web | api  etc
-          $excludeMiddleware = $this->config('routes.exclude.middleware');
+          $excludeMiddleware = $this->configService->config('routes.exclude.middleware');
           if (count($excludeMiddleware) > 0) {
 
               if (count($excludeMiddleware) > 1){
@@ -114,7 +118,7 @@
            }
 
           // Should we exclude route based on only certain filters should be included
-          foreach($this->config('routes.include.filter') as $filter){
+          foreach($this->configService->config('routes.include.filter') as $filter){
             //  echo "\n include filter: $filter  " . $route->uri() . " \n";
               if (Str::is( $filter,$route->uri(),ignoreCase: true) === false  ) {
                     Log::debug('excluding Route include filter ' . $route->uri() );
@@ -127,18 +131,7 @@
            return $forgeRoute;
       }
 
-      protected function config(string $string) : mixed
-      {
-           $config_path = 'saloonforge.integrations.' . $this->integration ;
-          $integration_config_value = config($config_path . '.' . $string,self::EmptyConfigValue);
 
-          if ($integration_config_value == self::EmptyConfigValue) {
-              $config_path = 'saloonforge.integrations.Default' ;
-              $integration_config_value = config($config_path . '.' . $string);
-          }
-
-          return $integration_config_value;
-      }
 
 
   }
