@@ -29,6 +29,7 @@ class {{$integration}}Api extends \Tobya\SaloonFire\SaloonFire
 
 
 
+
       public function __construct(  )
       {
             $this->connector = new {{$integration}}Connector();
@@ -53,6 +54,7 @@ class {{$integration}}Api extends \Tobya\SaloonFire\SaloonFire
 
 
     @endforeach
+
 
 
 
