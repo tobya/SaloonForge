@@ -10,22 +10,24 @@ namespace {{$namespace}};
  @foreach ($requests as $request)
   use {{$namespace_withrequest}}\{{$request->name}};
  @endforeach
+
  use Saloon\Traits\Plugins\AcceptsJson;
  use Saloon\Http\Response;
  use Saloon\Http\Request;
 
-// Client library must composer require tobya/saloon
- // use Tobya\Saloon\SaloonFire;
+// Client library must
+//      composer require tobya/saloonfire
 
-class {{$integration}}Api extends \Tobya\Saloon\SaloonFire
+
+class {{$integration}}Api extends \Tobya\SaloonFire\SaloonFire
 {
 
-      protected {{$integration}}Connector $connector;
      /**
-     * @var null | Request
+     * @var {{$integration}}Connector $connector
      */
+     protected $connector;
 
-      private $shouldReturnRequest = false;
+
 
       public function __construct(  )
       {
@@ -33,31 +35,7 @@ class {{$integration}}Api extends \Tobya\Saloon\SaloonFire
       }
 
 
-      public function getRequest() : static
-      {
-          $this->shouldReturnRequest = true;
-          return $this;
-      }
 
-      public function send(Request $request ) : Response
-      {
-            return $this->connector->send($request);
-      }
-
-
-      Protected function getRequest_or_SendForResult($request )
-      {
-            // apply any modifiers
-            $request = $this->applymodifiers($request);
-
-            // if getRequest() has been called, don't actually send request to server,
-            // just return the request to caller.
-            if ($this->shouldReturnRequest){
-                return $request;
-            }
-
-            return $this->send($request);
-      }
     @foreach ($requests as $request)
         {{-- this is correct indentation --}}
     /**
