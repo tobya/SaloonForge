@@ -38,7 +38,7 @@ class {{$integration}}Api extends \Tobya\SaloonFire\SaloonFire
 
     @foreach ($requests as $request)
         {{-- this is correct indentation --}}
-    /**
+        /**
         * {{$request->name}}
         * @return Response | {{$request->name}}
         */
